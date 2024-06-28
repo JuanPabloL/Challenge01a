@@ -17,7 +17,7 @@ namespace Application.UseCases.Tasks.Commands.CreateTask
                     TaskId = new Guid(),
                     Name = request.Titulo,
                     Description = request.Descripcion,                   
-                    Status = true,
+                    Status = false,
                     DateTime = DateTime.UtcNow,
                 };
 
