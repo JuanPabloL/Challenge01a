@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Application.UseCases.Tasks.Commands.CreateTask;
-//using Application.UseCases.Transactions.Commands.DeleteTransaction;
-//using Application.UseCases.Transactions.Commands.UpdateTransaction;
 using Application.UseCases.Tasks.Queries.GetTaskById;
 using Application.UseCases.Tasks.Queries.GetTasks;
 using Application.UseCases.Tasks.Commands.SetTaskCompleted;

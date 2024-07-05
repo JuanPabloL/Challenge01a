@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Application.UseCases.Common.Handlers;
 using Application.UseCases.Common.Results;
+using Domain.Entities;
 using MediatR;
 
 namespace Application.UseCases.Tasks.Commands.SetTaskCompleted
@@ -8,7 +9,7 @@ namespace Application.UseCases.Tasks.Commands.SetTaskCompleted
     public class SetTaskCompletedCommand : SetTaskCompletedCommandModel, IRequest<Result<SetTaskCompletedCommandDto>>
     {
         public class SetTaskCompletedCommandHandler(
-            IRepository<Domain.Entities.Task> taskRepository) : UseCaseHandler, IRequestHandler<SetTaskCompletedCommand, Result<SetTaskCompletedCommandDto>>
+            IRepository<Domain.Entities.Task> taskRepository , IExternalService<LogDto> logService) : UseCaseHandler, IRequestHandler<SetTaskCompletedCommand, Result<SetTaskCompletedCommandDto>>
         {
             public async Task<Result<SetTaskCompletedCommandDto>> Handle(SetTaskCompletedCommand request, CancellationToken cancellationToken)
             {
@@ -19,6 +20,16 @@ namespace Application.UseCases.Tasks.Commands.SetTaskCompleted
                 task.Status = true;
 
                 await taskRepository.UpdateAsync(task);
+
+                LogDto log = new LogDto();
+
+                log.Log.Id = Guid.NewGuid().ToString();
+                log.Log.Description = "Task Completed Succesfully";
+                log.Log.Date = DateTime.UtcNow;
+                log.Log.Type = Domain.Enum.LogType.Information;
+
+                await logService.Create(log);
+
 
                 var resultData = new SetTaskCompletedCommandDto { Success = true };
 

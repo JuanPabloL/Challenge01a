@@ -3,6 +3,7 @@ using Application.Common.Interfaces;
 using Application.UseCases.Common.Handlers;
 using Application.UseCases.Common.Results;
 using MediatR;
+using Domain.Entities;
 
 namespace Application.UseCases.Tasks.Queries.GetTasks
 {
@@ -10,7 +11,7 @@ namespace Application.UseCases.Tasks.Queries.GetTasks
     {
         public class GetTasksQueryHandler(
             IConfiguration configuration,
-            IRepository<Domain.Entities.Task> taskRepository) : UseCaseHandler, IRequestHandler<GetTasksQuery, Result<GetTasksQueryDto>>
+            IRepository<Domain.Entities.Task> taskRepository , IExternalService<LogDto> logService) : UseCaseHandler, IRequestHandler<GetTasksQuery, Result<GetTasksQueryDto>>
         {
             public async Task<Result<GetTasksQueryDto>> Handle(GetTasksQuery request, CancellationToken cancellationToken)
             {
@@ -30,6 +31,16 @@ namespace Application.UseCases.Tasks.Queries.GetTasks
                 {
                     Tasks = tasksDto
                 };
+
+                LogDto log = new LogDto();
+
+                log.Log.Id = Guid.NewGuid().ToString();
+                log.Log.Description = "Tasks Queryed Succesfully";
+                log.Log.Date = DateTime.UtcNow;
+                log.Log.Type = Domain.Enum.LogType.Information;
+
+                await logService.Create(log);
+
 
                 return this.Succeded(resultData);
             }
